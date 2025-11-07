@@ -39,6 +39,11 @@ Following key features are provided in Univault:
 
 ---
 
+## Dependencies or setup instructions
+ - As Remix IDE runs entirely on browser, there are no dependencies
+   
+---
+
 ## Quick Start (Remix IDE)
 
 The fastest way to demo UniVault without any local installation.
