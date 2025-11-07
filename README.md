@@ -6,7 +6,7 @@ This is a lightweight and gas effecient smart contract system to issue and verif
 
 ---
 
-## Description
+## Description of the project
 
 Following key features are provided in Univault:
 
@@ -50,7 +50,7 @@ The fastest way to demo UniVault without any local installation.
 4. Set Solidity compiler version to 0.8.18 or higher
 5. Select environment: JavaScript VM (Remix default)
 
-### how to deploy
+### How to use or deploy
 
 ```solidity
 // Constructor parameter:
