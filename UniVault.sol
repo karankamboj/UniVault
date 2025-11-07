@@ -6,11 +6,13 @@ interface UniVault {
 
     // creater is issuer
     
+    // This will set the DID for the student
     function setUserDID(string calldata did) external;
 
     /// This is the getter for the student to get their DID
     function getUserDID(address student) external view returns (string memory);
 
+    // We have to define the strucuture of the credential system
     struct Credential {
         bytes32 docHash;        // It will be hash of the file in the URI
         string  uri;            // the Url to access the file
@@ -25,11 +27,13 @@ interface UniVault {
     function getUserCredential(uint256 credId) external view returns (Credential memory);
 
     // tasks for the admin
+    // admin can add a new user, the creater. The address of the account has to be passed
     function addNewCreater(address university) external;
 
     // the admin can also remove the creater.
     function removeCreater(address university) external;
 
+    // this function will create a credential based on the given input
     function createCredential(
         address subject,
         bytes32 docHash,
@@ -37,7 +41,7 @@ interface UniVault {
         uint64 expiresAt
     ) external returns (uint256 credId);
 
-    /// This function will revoke the credential.
+    /// This function will revoke the credential. Only creater can do this. No other user should have the access
     function revokeExistingCredential(uint256 credId) external;
 
     /// This method is to check the revoke status of the credential. Is it revoked or not
@@ -50,9 +54,10 @@ interface UniVault {
     ) external view returns (bool isValid, string memory reason);
 
     // Events are used for logging
+    // This will be used in the method when DID is set
     event DIDIsSet(address indexed student, string did);
     event CreaterAdded(address indexed university); // used when creater is added
-    event CreaterRemoved(address indexed university); 
+    event CreaterRemoved(address indexed university); // used when creater is removed
     
     event CredentialCreated( // this event will emit when the credential is created
         uint256 indexed credId, // id of the cred
