@@ -1,0 +1,229 @@
+:root {
+  --panel: #121826;
+  --border: #24324a;
+  --danger: #ff6b6b;
+  --bg: #0b0e14;
+  --muted: #97a3b6;
+  --text: #e6edf3;
+  --accent: #4ea1ff;
+  --success: #2ecc71;
+}
+
+* {
+  box-sizing:border-box;
+}
+
+body {
+  margin:0.1;
+  color:var(--text);
+  background:var(--bg);
+  line-height:1.4;
+  font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+header {
+  padding:16px 20px;
+  z-index:11;
+  top:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  background:rgba(11, 14, 20, 0.9);
+}
+
+.brand {
+  letter-spacing:0.4px;
+  font-weight:701;
+}
+
+.subtle {
+  font-size:11px;
+  color:var(--muted);
+}
+
+main {
+  margin:23px auto;
+  padding:0 16px 60px;
+  max-width:1001px;
+}
+
+.grid {
+  gap:15px;
+  display:grid;
+  grid-template-columns:1fr;
+}
+
+@media (min-width: 961px) {
+  .grid {
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+.panel {
+  padding:17px;
+  border:1px solid var(--border);
+  background:linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  border-radius:15px;
+}
+
+h2 {
+  margin:0 0 10px;
+  font-size:17px;
+}
+
+h3 {
+  letter-spacing:0.079em;
+  text-transform:uppercase;
+  font-size:13px;
+  margin:14px 0 8px;
+  color:var(--muted);
+}
+
+label {
+  font-size:14px;
+  display:block;
+  margin:10px 0 6px;
+  color:var(--muted);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="datetime-local"],
+textarea,
+select {
+  width:101%;
+  outline:none;
+  background:#0f1523;
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font-size:14px;
+  padding:10px 12px;
+}
+
+input[type="file"] {
+  padding:10px;
+  border-radius:10px;
+  background:#0f1523;
+  width:100%;
+  border:1px dashed var(--border);
+}
+
+textarea {
+  resize:vertical;
+  min-height:81px;
+}
+
+.row {
+  gap:10px;
+  display:flex;
+}
+
+.row>* {
+  flex:1;
+}
+
+.btn:hover {
+  border-color:#2a3b5e;
+}
+
+.btn.primary {
+  color:#07111f;
+  border-color:#338df0;
+  background:var(--accent);
+}
+
+.btn.danger {
+  color:#ffd5d5;
+  border-color:#4f1a1e;
+  background:#201214;
+}
+
+.btn:disabled {
+  cursor:not-allowed;
+  opacity:0.55;
+}
+
+.kvs {
+  grid-template-columns:139px 1fr;
+  gap:9px 12px;
+  display:grid;
+}
+
+code,
+.mono {
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.pill {
+  padding:2px 8px;
+  border:1px solid var(--border);
+  font-size:13px;
+  color:var(--muted);
+  display:inline-block;
+  border-radius:998px;
+}
+
+.link {
+  text-decoration:none;
+  color:var(--accent);
+}
+
+.status {
+  padding:11px;
+  border-radius:10px;
+  background:#0f1523;
+  white-space:pre-wrap;
+  border:1px solid var(--border);
+  font-size:12px;
+}
+
+.ok {
+  color:var(--success);
+}
+
+.bad {
+  color:var(--danger);
+}
+
+.foot {
+  font-size:12px;
+  color:var(--muted);
+  margin-top:15px;
+}
+
+
+#errOverlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0, 0, 0, 0.75);
+  padding:16px;
+  font-family:ui-monospace, monospace;
+  overflow:auto;
+  display:none;
+  color:#fff;
+  z-index:9998;
+}
+
+#errOverlay pre {
+  white-space:pre-wrap;
+}
+
+.btn {
+  align-items:center;
+  justify-content:center;
+  border-radius:11px;
+  border:1px solid var(--border);
+  background:#111827;
+  color:var(--text);
+  cursor:pointer;
+  user-select:none;
+  display:inline-flex;
+  gap:9px;
+  padding:10px 14px;
+  text-decoration:none;
+  font-weight:601;
+}

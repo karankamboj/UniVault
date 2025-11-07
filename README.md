@@ -45,10 +45,18 @@ Following key features are provided in Univault:
 
 ### Dependencies
 - Solidity Compiler
+    - It's a tool that converts the high level solidity (.sol) code into byte code which makes it executable on Ethereum Virtual Machine (EVM)
 - OpenZeppelin Contracts
     - import "@openzeppelin/contracts/access/Ownable.sol";
     - import "@openzeppelin/contracts/utils/Counters.sol";
-- MetaMask
+    - OpenZeppelin is a library of smart contracts created with Solidity.
+    - They are the building blocks of complex smart contracts 
+- MetaMask -> https://metamask.io/
+    - It's a crypto wallet system. 
+    - It's mostly use for Ethereum and EVM
+    - It's also an gateway to dApps
+    - It is also responsible for Network Management
+ 
    
 
 The fastest way to demo UniVault without any local installation.
@@ -72,7 +80,7 @@ The fastest way to demo UniVault without any local installation.
     - Logs can be seen on terminal to debug the issues.
 ### How to deploy
 
-- Open Remix
+- Open Remix -> https://remix.ethereum.org/
 - Open Solidity Files
 - Choose Compiler -> Click on Compile Button
 - Install MetaMask to manage the crypto wallet
