@@ -1,85 +1,164 @@
-# UniVault — Decentralized University Credential Registry (Group 31)
+# UniVault | University Credential Management System
 
-## 1) Description of the project
-UniVault is a lightweight, gas‑aware smart‑contract design for issuing and verifying university credentials on Ethereum. It keeps sensitive documents off‑chain and anchors only a content hash (keccak256) and a URI (e.g., an IPFS CID) on‑chain, allowing verifiers to prove integrity without exposing private data. Roles are defined with AccessControl: an admin onboards universities as issuers; issuers create and revoke credentials; students self‑manage a DID string for discovery and linking. Revocation uses a per‑issuer bitmap (one bit per credential), enabling constant‑time, low‑cost status updates. A verifier fetches the off‑chain file, recomputes its hash, and calls `verifyCredential` to confirm the credential exists, isn’t revoked or expired, and matches the expected hash. This draft focuses on the on‑chain data model and external function signatures so the team can safely add or remove features later (e.g., schema registry, EIP‑712 attestations, ZK proofs, or a UI). The design is demo‑able end‑to‑end in Remix using the JavaScript VM.
+**Group 31**
+
+This is a lightweight and gas effecient smart contract system to issue and verify university credentials on Ethereum. Storing only cryptographic proofs on chain makes it privacy protected verification and keeps sensitive data off-chain.
 
 ---
 
-## 2) Dependencies or setup instructions
+## Overview
 
-### Fastest path (no local installs): Remix
-- Use Remix IDE in your browser.
-- Solidity compiler: **0.8.20+**.
-- Create a file `UniVault.sol` and paste the draft contract.
-- Environment: **JavaScript VM** (Remix default).
+Following key features are provided in Univault:
 
-### Local toolchain (for later)
-- Node.js **20.x** and npm **10.x**
-- **Hardhat**, **Ethers.js**, **OpenZeppelin Contracts**
+- **Off-chain Storage**: Files kept off the blockchain, with only verification codes stored on-chain
+- **Role-Based Access**: OpenZeppelin's AccessControl to manage admin, creater, and student roles
+- **Gas-Optimized Revocation**: Using bitmap-based revocation system for low cost updates
+- **DID Support**: Students can self-manage 
+- **Verifiable Integrity**: keccak256 hashing for proof system
+- **Extensible Design**: Keeping the structure modular for future developments
 
-Typical flow once the repo exists:
-```bash
-npm install
-npx hardhat compile
-# example:
-npx hardhat run scripts/deploy_univault.js --network sepolia
+---
+
+## Architecture
+
+### On-Chain Components
+- Document hash
+- storage location link
+- Creater and student addresses
+- Expiration timestamp
+- Per creater revocation bitmap
+
+### Off-Chain Components
+- Credential documents
+- Stored externally
+
+### Roles
+- **Admin**: Onboards universities as creaters
+- **Creater**: Creates and revokes credentials
+- **Student**: Self-manages DID string for linking credentials
+
+---
+
+## Quick Start (Remix IDE)
+
+The fastest way to demo UniVault without any local installation.
+
+### Setup
+1. Open Remix IDE at https://remix.ethereum.org
+2. Create a new file: `UniVault.sol`
+3. Paste the contract code
+4. Set Solidity compiler version to 0.8.18 or higher
+5. Select environment: JavaScript VM (Remix default)
+
+### Deploy
+
+```solidity
+// Constructor parameter:
+admin: 0x0000000000000000000000000000000000000000
+// (Passing zero address makes deployer the admin)
 ```
 
----
+Click Deploy.
 
-## 3) How to use or deploy
+### Basic Workflow
 
-### Remix (JavaScript VM) quick demo
+#### Add a Creater (Admin Only)
+```javascript
+// to switch to admin account
+addNewCreater("0x5B38Da6a701c568545dCfcB03FcB875f56beddC4")
+```
 
-**Compile & Deploy**
-- Compile `UniVault.sol` with Solidity **0.8.20+**.
-- Deploy & Run → Environment = **JavaScript VM** → choose any default account.
-- Constructor (`admin`): `0x0000000000000000000000000000000000000000`
-  - (passing zero makes the **deployer** the admin) → **Deploy**.
+#### Student Sets DID
+```javascript
+// to switch to student account
+setUserDID("did:key:zStudentExample123")
 
-**Add an issuer (admin‑only)**
-- As the admin account, call: `addIssuer(<issuerAddress>)`.
+// to verify DID was set
+getUserDID("0xStudentAddress")
+```
 
-**Student sets DID**
-- Switch to a different account (student) and call:  
-  `setMyDID("did:key:zStudentExample123")`
-- Read back with: `getDID(<studentAddress>)`.
-
-**Issue a credential (issuer‑only)**
-```text
-issueCredential(
-  <studentAddress>,                 // address (no quotes)
-  <bytes32 docHash>,                // e.g., 0xe4d6d3299804...e6dbd9
-  "ipfs://bafy...samplecid",        // string (quoted)
-  0                                 // uint64 (no quotes) or Unix expiry
+#### Create a Credential (Creater Only)
+```javascript
+// to switch to creater account
+createCredential(
+  "0xStudentAddress",
+  "docHash",
+  "uri",
+  0  // 0 = never expires
 )
 ```
-- Note the returned `credId` (e.g., 1). If Remix hides returns, read the **CredentialIssued** event or call `getCredential(1)`.
 
-**Verify & revoke**
-- `verifyCredential(credId, <same docHash>)` → `(true, "OK")` if valid.
-- `revokeCredential(credId)` (issuer) → `isRevoked(credId)` → `true`; then  
-  `verifyCredential(credId, <hash>)` → `(false, "REVOKED")`.
+Note the `credId` (e.g., `1`) from the transaction logs or `CredentialCreated` event.
 
-**Input tips**
-- **Addresses** = no quotes; **Strings** = quoted; **Numbers** = no quotes.
-- In Remix, always call functions on the latest deployed **UniVault** instance.
+#### Verify a Credential
+```javascript
+verifyCredential(
+  1,  // credId
+  "providedDocHash"
+)
+// If valid it returns: (true, "OK")
+```
+
+#### Revoke a Credential (Creater Only)
+```javascript
+// to switch to creater account
+revokeExistingCredential(1)
+
+// to check revocation status
+isCredRevoked(1)  // Returns: true
+
+// to verification now fails
+verifyCredential(1, "0x...")  // returns (false, "REVOKED")
+```
+
+## Smart Contract Interface
+
+### Core Functions
+
+#### Admin Functions
+```solidity
+function addNewCreater(address university) external
+function removeCreater(address university) external
+```
+
+#### Creater Functions
+```solidity
+function createCredential(
+    address subject,
+    bytes32 docHash,
+    string calldata uri,
+    uint64 expiresAt
+) external returns (uint256 credId)
+
+function revokeExistingCredential(uint256 credId) external
+```
+
+#### Student Functions
+```solidity
+function setUserDID(string calldata did) external
+```
+
+#### View Functions
+```solidity
+function verifyCredential(uint256 credId, bytes32 providedDocHash) 
+    external view returns (bool isValid, string memory reason)
+
+function getUserCredential(uint256 credId) 
+    external view returns (Credential memory)
+
+function getUserDID(address student) 
+    external view returns (string memory)
+
+function isCredRevoked(uint256 credId) 
+    external view returns (bool)
+```
 
 ---
 
-## 4) Functions
+## Security Considerations
 
-| Function | Who can call | Inputs (order matters) | Notes |
-|---|---|---|---|
-| `constructor(address admin)` | deployer | `admin` or `0x000...0000` | If admin is zero, deployer becomes admin. |
-| `addIssuer(address university)` | admin only | `university` | Grants `ISSUER_ROLE`. |
-| `removeIssuer(address university)` | admin only | `university` | Revokes `ISSUER_ROLE`. |
-| `setMyDID(string did)` | any | `"did:..."` | Stores caller’s DID. |
-| `getDID(address student)` | view | student address | Returns DID string. |
-| `issueCredential(address subject, bytes32 docHash, string uri, uint64 expiresAt)` | issuer only | `(subject, docHash, uri, expiresAt)` | Emits `CredentialIssued(credId, …)`. Return value not visible to EOA; use event/logs. |
-| `getCredential(uint256 credId)` | view | `credId` | Anyone can read. |
-| `isRevoked(uint256 credId)` | view | `credId` | Bitmap lookup. |
-| `revokeCredential(uint256 credId)` | issuer only | `credId` | Emits `CredentialRevoked`. |
-| `verifyCredential(uint256 credId, bytes32 providedDocHash)` | view | `(credId, providedDocHash)` | Returns `(isValid, reason)` where `reason ∈ {"OK","NOT_FOUND","REVOKED","EXPIRED","HASH_MISMATCH"}`. |
-
----
+- **Access Control**: Authorized creaters can create or revoke credentials
+- **Hash Verification**: to prove content integrity
+- **No Private Data On-Chain**: Sensitive information stored off-chain only
+- **Immutable Records**: Issued credentials cannot be modified, only revoked
+- **Gas Efficiency**: Bitmap revocation minimizes costs
