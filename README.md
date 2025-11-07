@@ -2,11 +2,17 @@
 
 **Group 31**
 
-This is a lightweight and gas effecient smart contract system to issue and verify university credentials on Ethereum. Storing only cryptographic proofs on chain makes it privacy protected verification and keeps sensitive data off-chain.
-
 ---
 
 ## Description of the project
+
+This is a lightweight and gas effecient smart contract system to issue and verify university credentials on Ethereum. Storing only cryptographic proofs on chain makes it privacy protected verification and keeps sensitive data off-chain.
+
+
+The idea of UniVault aims to change the credential management system for the universitiies and colleges by using latest coding technologies making a secure, and centralized system. The system should be very effecient for which will allow to save educational data. These days, students like us have to dead with many challenges during the need to fetch academic records becaause the process is very time taking, manual and consumes a lot of money. Also, the old  systems are easily to get risk because of hackers. We will solve these problems by providing students a very secure system where they can access their acadcemic data by themself whenever they want without any human or manual interaction, saving large amount of time and money.
+
+Generally, when a user requests for the records like transcrips from the universities, there will be middlemans who are employees of the universtiy. But, with UniVault, there will be no middleman. The middleman will be replaced by our contract written in Solidity on top of Ethereum blockchain technology. It will execute some if, else like logic, to take necessary action on specific kind of requests. The system is always trust worthy because the contracts are always rigit and can't be modified. This  eliminate the risk of hackers to steal confidential data. This system promotes transparency, efficieny, and user empowerment.
+
 
 Following key features are provided in Univault:
 
@@ -16,10 +22,6 @@ Following key features are provided in Univault:
 - **DID Support**: Students can self-manage 
 - **Verifiable Integrity**: keccak256 hashing for proof system
 - **Extensible Design**: Keeping the structure modular for future developments
-
----
-
-## Architecture
 
 ### On-Chain Components
 - Document hash
@@ -40,30 +42,73 @@ Following key features are provided in Univault:
 ---
 
 ## Dependencies or setup instructions
- - As Remix IDE runs entirely on browser, there are no dependencies
-   
----
 
-## Quick Start (Remix IDE)
+### Dependencies
+- Solidity Compiler
+- OpenZeppelin Contracts
+    - import "@openzeppelin/contracts/access/Ownable.sol";
+    - import "@openzeppelin/contracts/utils/Counters.sol";
+- MetaMask
+   
 
 The fastest way to demo UniVault without any local installation.
 
 ### Setup
-1. Open Remix IDE at https://remix.ethereum.org
-2. Create a new file: `UniVault.sol`
-3. Paste the contract code
-4. Set Solidity compiler version to 0.8.18 or higher
-5. Select environment: JavaScript VM (Remix default)
+- Open Remix IDE at https://remix.ethereum.org
+- Create a new Workspace
+    - Click on Workspace -> Create Workspace
+- Add your contract files
+    - Create a new file: `UniVault.sol`
+    - Paste the contract code
+- Set Solidity compiler version to 0.8.18 or higher
+    - Click on the Solidity Compiler tab
+    - Select the preferred version  
+- Compile contract by clicking on Compile button
+- Deploy the Contract
+- Interact with the contract
+    - After deploying the contract, the functions will be visible.
+    - You can choose any function, give the inputs and click to make a call.
+- Debug
+    - Logs can be seen on terminal to debug the issues.
+### How to deploy
 
-### How to use or deploy
+- Open Remix
+- Open Solidity Files
+- Choose Compiler -> Click on Compile Button
+- Install MetaMask to manage the crypto wallet
+- Add funds
+- Click on deploy & Run
+- MetaMask → select UniVault → set any constructor params → Deploy
 
+
+While deploying, it will ask for an input for the parameter, the admin. use the following:
 ```solidity
 // Constructor parameter:
 admin: 0x0000000000000000000000000000000000000000
 // (Passing zero address makes deployer the admin)
 ```
 
-Click Deploy.
+### How to use
+- There will be different functions, each having different input and output
+- Some functions could be defined by the user, some could be inherited
+
+1. Add an issuer
+    - input: address of the admin account
+    - Click: transact
+    - Expect: Event CreaterAdded(0x5B38…bdC4)
+
+2. Student sets DID
+    - Input: "did:key:zStudentExample123"
+    - Click: transact 
+    - Expect: DIDIsSet(...)
+
+3. Issue a credential
+    - Input: 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2 0xe4d6d3299804d5555bc2a46af78cd89187af7c737b2717d0cd5d443858e6dbd9 "ipfs://bafybeigdyrsamplecid1234567890abcdef" 0
+    - Click: transact
+    - Expect: CredentialCreated(...)
+
+Currently only three functions has been implemented. We are working on rest of them.
+
 
 ### Basic Workflow
 
