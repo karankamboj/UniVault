@@ -155,7 +155,7 @@ You need test ETH to deploy contracts and pay for transactions. https://faucet.m
 ### Part 3: Frontend UI Setup
 
 1. **Download Files**
-   - Save `index.html` and `js_scripts.js` in the same folder
+   - Save `index.html`, `js_scripts.js`, `styles.css` in the same folder
    - Example: ``~/UniVault/`
 
 2. **Open Terminal/Command Prompt**
