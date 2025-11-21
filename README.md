@@ -213,7 +213,7 @@ You need test ETH to deploy contracts and pay for transactions. https://faucet.m
 
 **Note**: The deployer address is automatically the admin.
 
-1. **Open Remix** or use Etherscan's "Write Contract" feature
+1. **Open Remix** 
 2. **Call `addIssuer` function**:
    - Input: University/institution wallet address
    - Example: `0x5B38Da6a701c568545dCfcB03FcB875f56beddC4`
