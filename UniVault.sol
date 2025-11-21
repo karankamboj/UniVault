@@ -1,46 +1,93 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract UniVault is AccessControl {
-    using Strings for uint256;
-    bytes32 public constant ISSUER_ROLE = keccak256("ISSUER_ROLE");
+    bytes32 public constant ISSUER_ROLE   = keccak256("ISSUER_ROLE");
+    bytes32 public constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
 
     constructor(address admin) {
-        _grantRole(DEFAULT_ADMIN_ROLE, admin == address(0) ? msg.sender : admin);
+        address a = admin == address(0) ? msg.sender : admin;
+        _grantRole(DEFAULT_ADMIN_ROLE, a);
+        _grantRole(VERIFIER_ROLE, a); 
     }
 
-    mapping(address => string) private _didOf;
-
-    function setMyDID(string calldata did) external {
-        _didOf[msg.sender] = did;
-        emit DIDSet(msg.sender, did);
+    struct DIDAnchor {
+        address controller;   // can update this DID record
+        string  didURI;       // like ipfs://CID
+        bytes32 docHash;      // integrity hash of document
     }
 
-    function getDID(address student) external view returns (string memory) {
-        return _didOf[student];
+    // This is subject's address
+    mapping(address => DIDAnchor) private _didOf;
+
+    event DIDAnchored(address indexed subject, address indexed controller, string didURI, bytes32 docHash);
+    event DIDControllerChanged(address indexed subject, address indexed newController);
+    event DIDURIUpdated(address indexed subject, string didURI, bytes32 docHash);
+
+
+    function anchorMyDID(string calldata didURI, bytes32 docHash) external {
+        _didOf[msg.sender] = DIDAnchor({controller: msg.sender, didURI: didURI, docHash: docHash});
+        emit DIDAnchored(msg.sender, msg.sender, didURI, docHash);
     }
 
-    event DIDSet(address indexed student, string did);
+     //this is admin managed
+    function setDIDController(address subject, address newController) external {
+        DIDAnchor storage d = _didOf[subject];
+        require(d.controller == msg.sender || hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "not controller/admin");
+        d.controller = newController;
+        emit DIDControllerChanged(subject, newController);
+    }
+
+    function setDIDURI(address subject, string calldata didURI, bytes32 docHash) external {
+        DIDAnchor storage d = _didOf[subject];
+        require(d.controller == msg.sender || hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "not controller/admin");
+        d.didURI = didURI;
+        d.docHash = docHash;
+        emit DIDURIUpdated(subject, didURI, docHash);
+    }
+
+    function getDID(address subject) external view returns (DIDAnchor memory) {
+        return _didOf[subject];
+    }
 
     struct Credential {
-        bytes32 docHash;
-        string uri;
-        address issuer;
-        address subject;
-        uint64 issuedAt;
-        uint64 expiresAt;
-        uint256 issuerSeqIndex;
+        bytes32 docHash;          // keccak256 hash
+        string  uri;              // IPFS CID
+        address issuer;           // must have ISSUER_ROLE
+        address subject;          // holder's address
+        uint64  issuedAt;      
+        uint64  expiresAt;        // no expiry = 0
+        // this is per issuer revocation bitmap index, assigned sequentially
+        uint256 issuerSeqIndex;  
     }
 
     uint256 private _nextCredentialId = 1;
     mapping(uint256 => Credential) private _credentialOf;
+
+    // next index to assign sequentially
     mapping(address => uint256) private _issuerNextSeq;
+
+    // each bit in 256 bit word is "revoked"
     mapping(address => mapping(uint256 => uint256)) private _revocationBitmap;
 
-    bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;
+    event CredentialIssued(
+        uint256 indexed credId,
+        address indexed issuer,
+        address indexed subject,
+        bytes32 docHash,
+        string uri,
+        uint256 issuerSeqIndex,
+        uint64  expiresAt
+    );
+    event CredentialRevoked(
+        uint256 indexed credId,
+        address indexed issuer,
+        uint256 issuerSeqIndex
+    );
+    event IssuerAdded(address indexed university);
+    event IssuerRemoved(address indexed university);
+
 
     function addIssuer(address university) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _grantRole(ISSUER_ROLE, university);
@@ -52,14 +99,13 @@ contract UniVault is AccessControl {
         emit IssuerRemoved(university);
     }
 
-    event IssuerAdded(address indexed university);
-    event IssuerRemoved(address indexed university);
-
-    function issueCredential(address subject, bytes32 docHash, string calldata uri, uint64 expiresAt)
-        external
-        onlyRole(ISSUER_ROLE)
-        returns (uint256 credId)
-    {
+     //recording cred on chain
+    function issueCredential(
+        address subject,
+        bytes32 docHash,
+        string calldata uri,
+        uint64  expiresAt
+    ) external onlyRole(ISSUER_ROLE) returns (uint256 credId) {
         require(subject != address(0), "subject=0");
         require(docHash != bytes32(0), "hash=0");
 
@@ -79,6 +125,8 @@ contract UniVault is AccessControl {
         emit CredentialIssued(credId, msg.sender, subject, docHash, uri, seq, expiresAt);
     }
 
+
+     //bitmap lookup to revoke when already issued
     function revokeCredential(uint256 credId) external onlyRole(ISSUER_ROLE) {
         Credential storage c = _credentialOf[credId];
         require(c.issuer != address(0), "not found");
@@ -90,6 +138,8 @@ contract UniVault is AccessControl {
         emit CredentialRevoked(credId, msg.sender, c.issuerSeqIndex);
     }
 
+    
+     //bitmap lookup to check if revoked by issuer
     function isRevoked(uint256 credId) public view returns (bool) {
         Credential storage c = _credentialOf[credId];
         require(c.issuer != address(0), "not found");
@@ -97,6 +147,7 @@ contract UniVault is AccessControl {
         return (_revocationBitmap[c.issuer][wordIndex] & bitMask) != 0;
     }
 
+    
     function getCredential(uint256 credId) external view returns (Credential memory) {
         Credential memory c = _credentialOf[credId];
         require(c.issuer != address(0), "not found");
@@ -124,25 +175,28 @@ contract UniVault is AccessControl {
         return (true, "OK");
     }
 
-    function _bitmapPos(uint256 seqIndex) internal pure returns (uint256 wordIndex, uint256 bitMask) {
-        wordIndex = seqIndex >> 8;
-        uint256 bitPos = seqIndex & 255;
-        bitMask = (uint256(1) << bitPos);
+    event VerificationLogged(
+        uint256 indexed credId,
+        address indexed verifier,
+        bytes32 presentationHash,
+        bool success,
+        string context
+    );
+
+    function logVerification(
+        uint256 credId,
+        bytes32 presentationHash,
+        bool success,
+        string calldata context
+    ) external onlyRole(VERIFIER_ROLE) {
+        Credential storage c = _credentialOf[credId];
+        require(c.issuer != address(0), "not found");
+        emit VerificationLogged(credId, msg.sender, presentationHash, success, context);
     }
 
-    event CredentialIssued(
-        uint256 indexed credId,
-        address indexed issuer,
-        address indexed subject,
-        bytes32 docHash,
-        string uri,
-        uint256 issuerSeqIndex,
-        uint64 expiresAt
-    );
-
-    event CredentialRevoked(
-        uint256 indexed credId,
-        address indexed issuer,
-        uint256 issuerSeqIndex
-    );
+    function _bitmapPos(uint256 seqIndex) internal pure returns (uint256 wordIndex, uint256 bitMask) {
+        wordIndex = seqIndex >> 8;        // divide by 256
+        uint256 bitPos = seqIndex & 255;  // % 256
+        bitMask = (uint256(1) << bitPos);
+    }
 }
