@@ -14,8 +14,9 @@ var counterOfValues = 0
 
 const $ = (sel) => document.querySelector(sel);
 const u = (id, v) => (document.getElementById(id).textContent = v);
-const connect = (id, href, text) => { const a = document.getElementById(id); a.href = href; a.textContent = text; };
-const outputOnScreen = (id, v) => (document.getElementById(id).textContent = v);
+const link = (id, href, text) => {
+    const a = document.getElementById(id); a.href = href; a.textContent = text;
+}; const outputOnScreen = (id, v) => (document.getElementById(id).textContent = v);
 
 let listOfdata = [];
 
