@@ -11,7 +11,7 @@
 <body>
   <header>
     <div>
-      <div class="brand">🎓 UniVault </div>
+      <div class="brand">UniVault </div>
       <!-- <div class="subtle">Upload → Pinata · Hash → keccak256 & SHA-256 · Issue / Verify / Revoke</div> -->
     </div>
     <div class="row">
@@ -74,20 +74,7 @@
       </section>
     </div>
 
-    <section class="panel">
-      <h2>Notes</h2>
-      <ul>
-        <li><b>Integrity:</b> We compute <span class="mono">SHA-256(file)</span> and compare it to the digest inside the
-          CID to ensure the CID actually addresses your file.</li>
-        <li><b>On-chain docHash:</b> The contract expects <span class="mono">keccak256</span> of the canonical
-          credential bytes. Use the default strategy unless you have a special reason.</li>
-        <li><b>Verify flow:</b> A verifier fetches the file (or uses one provided), computes <span
-            class="mono">keccak256(bytes)</span>, and calls <span class="mono">verifyCredential(credId, hash)</span>.
-        </li>
-        <li><b>Security:</b> Do not publish a long-lived Pinata JWT in client code. Use a server to upload and return
-          the CID.</li>
-      </ul>
-    </section>
+
   </main>
 
 
