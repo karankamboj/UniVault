@@ -97,7 +97,7 @@ async function connectTometamaskserver() {
         // HARDHAT LOCAL NETWORK CONFIGURATION
         const HARDHAT_CHAIN_ID = 31337;
         const HARDHAT_NETWORK = {
-            chainId: '0x7a69', // 31337 in hex
+            chainId: '0x7a69',
             chainName: 'Hardhat Local',
             rpcUrls: ['http://127.0.0.1:8545'],
             nativeCurrency: {
@@ -107,24 +107,20 @@ async function connectTometamaskserver() {
             }
         };
 
-        // Check if we're on the correct network
         if (chainIdOfTheTask !== HARDHAT_CHAIN_ID) {
             console.warn(`Wrong network detected (Chain ID: ${chainIdOfTheTask}). Switching to Hardhat Local...`);
             try {
-                // Try to switch to Hardhat network
                 await eth.request({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: HARDHAT_NETWORK.chainId }],
                 });
                 console.log('Switched to Hardhat Local network');
 
-                // Reconnect after network switch
                 theOneWhoProvides = new ethers.BrowserProvider(eth);
                 theOneWhoSings = await theOneWhoProvides.getSigner();
                 const newNetwork = await theOneWhoProvides.getNetwork();
                 chainIdOfTheTask = Number(newNetwork.chainId);
             } catch (switchError) {
-                // If network doesn't exist, add it
                 if (switchError.code === 4902) {
                     console.log('Hardhat network not found. Adding it...');
                     try {
@@ -134,7 +130,6 @@ async function connectTometamaskserver() {
                         });
                         console.log('Hardhat Local network added successfully');
 
-                        // Reconnect after adding network
                         theOneWhoProvides = new ethers.BrowserProvider(eth);
                         theOneWhoSings = await theOneWhoProvides.getSigner();
                         const newNetwork = await theOneWhoProvides.getNetwork();

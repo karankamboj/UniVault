@@ -4,26 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniVault Login</title>
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles using Inter font */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
+            background-color: #f3f4f6;
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-    <!-- Login Card Container -->
     <div class="w-full max-w-md bg-white p-8 md:p-10 rounded-xl shadow-2xl border border-gray-100">
 
-        <!-- Header -->
         <header class="text-center mb-8">
             <div class="flex justify-center items-center mb-2">
-                <!-- University/Vault Icon (simple SVG) -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.464 9.299 5 7.5 5S4.168 5.464 3 6.253M12 6.253C13.168 5.464 14.701 5 16.5 5S19.832 5.464 21 6.253M12 6.253v13m-6 0h12M6 13h12" />
                 </svg>
@@ -32,10 +27,8 @@
             <p class="text-sm text-gray-500 mt-1">Securely access your academic portal</p>
         </header>
 
-        <!-- Login Form -->
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
             
-            <!-- Username Input -->
             <div>
                 <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
                 <input
@@ -48,7 +41,6 @@
                 >
             </div>
 
-            <!-- Password Input -->
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <input
@@ -61,12 +53,9 @@
                 >
             </div>
 
-            <!-- Error Message Display -->
             <div id="messageBox" class="text-center hidden p-3 rounded-lg text-sm transition-all duration-300">
-                <!-- Error messages will appear here -->
             </div>
 
-            <!-- Submit Button -->
             <div>
                 <button
                     type="submit"
@@ -80,7 +69,6 @@
     </div>
 
     <script>
-        // Use a function to safely display messages instead of alert()
         function showMessage(text, isError = true) {
             const messageBox = document.getElementById('messageBox');
             messageBox.textContent = text;
@@ -93,9 +81,8 @@
             }
         }
 
-        // Main login handling logic
         function handleLogin(event) {
-            event.preventDefault(); // Stop the default form submission
+            event.preventDefault();
 
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
@@ -105,23 +92,16 @@
 
             let redirectUrl = null;
 
-            // 1. Admin Login Check
             if (username === 'admin' && password === 'admin') {
                 redirectUrl = 'admin.html';
             } 
-            // 2. Student Login Check
             else if (username === 'student' && password === 'student') {
                 redirectUrl = 'student.html';
             } 
-            // 3. Invalid Credentials
             else {
                 showMessage("Invalid username or password. Please try again.", true);
-                return; // Stop execution if login fails
+                return;
             }
-
-            // --- Successful Login and Redirection ---
-            
-            // Redirect immediately using the relative path (which appends to the current directory URL)
             window.location.href = redirectUrl; 
         }
 

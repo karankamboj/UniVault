@@ -69,6 +69,69 @@ Following key features are provided in Univault:
 
 ---
 
+## Prerequisites & Installation
+
+### Prerequisites
+- **Node.js** (v16 or higher)
+- **npm** (Node Package Manager)
+- **MetaMask** Browser Extension
+
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd UniVault
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+---
+
+## Local Development (Recommended)
+
+This project is configured with **Hardhat** for a robust local development environment.
+
+### 1. Start Local Blockchain
+Start a local Hardhat node. This will give you 20 test accounts with 10,000 ETH each.
+```bash
+npx hardhat node
+```
+*Keep this terminal running.*
+
+### 2. Deploy Contracts
+Open a new terminal and deploy the contracts to your local network:
+```bash
+npx hardhat run scripts/deploy.js --network localhost
+```
+Copy the **Contract Address** from the output (e.g., `0x5FbDB2315678afecb367f032d93F642f64180aa3`).
+
+### 3. Configure MetaMask
+1. Open MetaMask and click the network dropdown.
+2. Select **"Add a network manually"**.
+3. Enter these details:
+   - **Network Name**: Hardhat Localhost
+   - **RPC URL**: `http://127.0.0.1:8545`
+   - **Chain ID**: `31337`
+   - **Currency Symbol**: `ETH`
+4. Click **Save**.
+
+### 4. Import Test Account
+1. Look at the terminal running `npx hardhat node`.
+2. Copy the **Private Key** of Account #0 (or any other account).
+3. In MetaMask, click your account icon -> **Import Account**.
+4. Paste the private key.
+5. You should now see 10,000 ETH.
+
+### 5. Connect UI
+1. Open `index.html` in your browser (or serve it using `python -m http.server 8000`).
+2. Connect your wallet and ensure you are on **Hardhat Localhost**.
+3. Paste the **Contract Address** you copied earlier.
+4. You are ready to test!
+
+---
+
 ## Setup Instructions
 
 ### Part 1: MetaMask & Sepolia Testnet Setup
