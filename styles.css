@@ -52,7 +52,7 @@ main {
 
 .grid {
   gap:15px;
-  display:grid;
+  /* display:grid; */
   grid-template-columns:1fr;
 }
 

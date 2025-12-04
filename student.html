@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UniVault </title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <div>
+      <div class="brand">🎓 UniVault </div>
+      <!-- <div class="subtle">Upload → Pinata · Hash → keccak256 & SHA-256 · Issue / Verify / Revoke</div> -->
+    </div>
+    <div class="row">
+      <button id="btnConnect" class="btn">Connect Wallet</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Setup</h2>
+      <div class="row">
+        <div>
+          <label>Contract Address</label>
+          <input id="inpContract" type="text" placeholder="0x... (UniVaultRegistry deployed address)" />
+        </div>
+        <div>
+          <label>Pinata JWT (ephemeral / scoped) <span class="subtle">(demo)</span></label>
+          <input id="inpPinataJWT" type="password" placeholder="pin_eyJhbGciOi..." />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Issuer (your wallet) <span class="subtle">auto-fills after connect</span></label>
+          <input id="inpIssuer" type="text" placeholder="0x..." disabled />
+        </div>
+        <div>
+          <label>Chain</label>
+          <input id="inpChain" type="text" placeholder="Chain from wallet" disabled />
+        </div>
+      </div>
+      <div class="foot">
+        <span class="pill">Tip</span> For production uploads, proxy Pinata requests via a tiny server (no secrets in the
+        browser).
+      </div>
+    </section>
+
+    <div class="grid" style="display: grid; grid-template-columns: 1.5fr; justify-items: center;">
+      <section class="panel" style="width: 600px;">
+        <h2>Verify / Read</h2>
+        <label>Credential ID</label>
+        <input id="credId" type="text" placeholder="e.g. 1" />
+
+        <div class="row" style="margin-top:4px;">
+          <button id="btnRead" class="btn">Read</button>
+          <!-- <button id="btnRevoke" class="btn danger">Revoke</button> -->
+        </div>
+
+        <h3>Verify Against File</h3>
+        <label>File to Verify</label>
+        <input id="verifyFile" type="file" accept="application/pdf,image/*,text/*,.json" />
+        <div class="row" style="margin-top:8px;">
+          <button id="btnVerify" class="btn">Compute & Call verifyCredential</button>
+        </div>
+
+        <h3>Result</h3>
+        <div class="status" id="verifyStatus">—</div>
+
+        <h3>Current Credential</h3>
+        <div class="status" id="readStatus">—</div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2>Notes</h2>
+      <ul>
+        <li><b>Integrity:</b> We compute <span class="mono">SHA-256(file)</span> and compare it to the digest inside the
+          CID to ensure the CID actually addresses your file.</li>
+        <li><b>On-chain docHash:</b> The contract expects <span class="mono">keccak256</span> of the canonical
+          credential bytes. Use the default strategy unless you have a special reason.</li>
+        <li><b>Verify flow:</b> A verifier fetches the file (or uses one provided), computes <span
+            class="mono">keccak256(bytes)</span>, and calls <span class="mono">verifyCredential(credId, hash)</span>.
+        </li>
+        <li><b>Security:</b> Do not publish a long-lived Pinata JWT in client code. Use a server to upload and return
+          the CID.</li>
+      </ul>
+    </section>
+  </main>
+
+
+  <div id="errOverlay"><strong>Runtime error</strong>
+    <pre id="errText"></pre>
+  </div>
+
+
+  <script type="module" src="./js_scripts.js"></script>
+</body>
+
+</html>
