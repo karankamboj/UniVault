@@ -1,148 +1,130 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>UniVault – Minimal UI</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniVault Login</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles using Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+    </style>
 </head>
+<body class="flex items-center justify-center min-h-screen p-4">
 
-<body>
-  <header>
-    <div>
-      <div class="brand">🎓 UniVault – Minimal UI</div>
-      <div class="subtle">Upload → Pinata · Hash → keccak256 & SHA-256 · Issue / Verify / Revoke</div>
-    </div>
-    <div class="row">
-      <button id="btnConnect" class="btn">Connect Wallet</button>
-    </div>
-  </header>
+    <!-- Login Card Container -->
+    <div class="w-full max-w-md bg-white p-8 md:p-10 rounded-xl shadow-2xl border border-gray-100">
 
-  <main>
-    <section class="panel">
-      <h2>Setup</h2>
-      <div class="row">
-        <div>
-          <label>Contract Address</label>
-          <input id="inpContract" type="text" placeholder="0x... (UniVaultRegistry deployed address)" />
-        </div>
-        <div>
-          <label>Pinata JWT (ephemeral / scoped) <span class="subtle">(demo)</span></label>
-          <input id="inpPinataJWT" type="password" placeholder="pin_eyJhbGciOi..." />
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label>Issuer (your wallet) <span class="subtle">auto-fills after connect</span></label>
-          <input id="inpIssuer" type="text" placeholder="0x..." disabled />
-        </div>
-        <div>
-          <label>Chain</label>
-          <input id="inpChain" type="text" placeholder="Chain from wallet" disabled />
-        </div>
-      </div>
-      <div class="foot">
-        <span class="pill">Tip</span> For production uploads, proxy Pinata requests via a tiny server (no secrets in the
-        browser).
-      </div>
-    </section>
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <div class="flex justify-center items-center mb-2">
+                <!-- University/Vault Icon (simple SVG) -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.464 9.299 5 7.5 5S4.168 5.464 3 6.253M12 6.253C13.168 5.464 14.701 5 16.5 5S19.832 5.464 21 6.253M12 6.253v13m-6 0h12M6 13h12" />
+                </svg>
+            </div>
+            <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">UniVault</h1>
+            <p class="text-sm text-gray-500 mt-1">Securely access your academic portal</p>
+        </header>
 
-    <div class="grid">
-      <section class="panel">
-        <h2>Upload & Issue Credential</h2>
-        <label>Subject (student) Address</label>
-        <input id="issueSubject" type="text" placeholder="0x... student wallet" />
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
+            
+            <!-- Username Input -->
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                >
+            </div>
 
-        <label>Credential File</label>
-        <input id="issueFile" type="file" accept="application/pdf,image/*,text/*,.json" />
+            <!-- Password Input -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="••••••••"
+                    required
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                >
+            </div>
 
-        <div class="row">
-          <div>
-            <label>Expiry (optional)</label>
-            <input id="issueExpiry" type="datetime-local" />
-          </div>
-          <div>
-            <label>On-chain hash strategy</label>
-            <select id="issueHashStrategy">
-              <option value="bytes">keccak256(file bytes) — recommended</option>
-              <option value="cid">keccak256(CID string) — quick & lossy</option>
-            </select>
-          </div>
-        </div>
+            <!-- Error Message Display -->
+            <div id="messageBox" class="text-center hidden p-3 rounded-lg text-sm transition-all duration-300">
+                <!-- Error messages will appear here -->
+            </div>
 
-        <div class="row" style="margin-top:12px;">
-          <button id="btnUpload" class="btn">1) Upload to Pinata</button>
-          <button id="btnIssue" class="btn primary" disabled>2) Issue Credential</button>
-        </div>
+            <!-- Submit Button -->
+            <div>
+                <button
+                    type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out transform hover:scale-[1.01] active:scale-[0.99]"
+                >
+                    Sign In
+                </button>
+            </div>
+        </form>
 
-        <h3>Upload Result</h3>
-        <div class="kvs">
-          <div>CID</div>
-          <div class="mono" id="cidOut">—</div>
-          <div>Gateway</div>
-          <div><a id="cidLink" class="link" href="#" target="_blank">—</a></div>
-          <div>keccak256(bytes)</div>
-          <div class="mono" id="kecBytes">—</div>
-          <div>keccak256(CID)</div>
-          <div class="mono" id="kecCid">—</div>
-        </div>
-
-        <h3>Issue Tx</h3>
-        <div class="status" id="issueStatus">—</div>
-
-        <div>SHA-256 vs CID</div>
-        <div class="mono" id="shaCheck">—</div>
-      </section>
-
-      <section class="panel">
-        <h2>Verify / Read / Revoke</h2>
-        <label>Credential ID</label>
-        <input id="credId" type="text" placeholder="e.g. 1" />
-
-        <div class="row" style="margin-top:4px;">
-          <button id="btnRead" class="btn">Read</button>
-          <button id="btnRevoke" class="btn danger">Revoke</button>
-        </div>
-
-        <h3>Verify Against File</h3>
-        <label>File to Verify</label>
-        <input id="verifyFile" type="file" accept="application/pdf,image/*,text/*,.json" />
-        <div class="row" style="margin-top:8px;">
-          <button id="btnVerify" class="btn">Compute & Call verifyCredential</button>
-        </div>
-
-        <h3>Result</h3>
-        <div class="status" id="verifyStatus">—</div>
-
-        <h3>Current Credential</h3>
-        <div class="status" id="readStatus">—</div>
-      </section>
     </div>
 
-    <section class="panel">
-      <h2>Notes</h2>
-      <ul>
-        <li><b>Integrity:</b> We compute <span class="mono">SHA-256(file)</span> and compare it to the digest inside the
-          CID to ensure the CID actually addresses your file.</li>
-        <li><b>On-chain docHash:</b> The contract expects <span class="mono">keccak256</span> of the canonical
-          credential bytes. Use the default strategy unless you have a special reason.</li>
-        <li><b>Verify flow:</b> A verifier fetches the file (or uses one provided), computes <span
-            class="mono">keccak256(bytes)</span>, and calls <span class="mono">verifyCredential(credId, hash)</span>.
-        </li>
-        <li><b>Security:</b> Do not publish a long-lived Pinata JWT in client code. Use a server to upload and return
-          the CID.</li>
-      </ul>
-    </section>
-  </main>
+    <script>
+        // Use a function to safely display messages instead of alert()
+        function showMessage(text, isError = true) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = text;
+            messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700', 'border', 'border-red-300', 'border-green-300');
+            
+            if (isError) {
+                messageBox.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-300');
+            } else {
+                messageBox.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-300');
+            }
+        }
 
+        // Main login handling logic
+        function handleLogin(event) {
+            event.preventDefault(); // Stop the default form submission
 
-  <div id="errOverlay"><strong>Runtime error</strong>
-    <pre id="errText"></pre>
-  </div>
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
 
+            let redirectUrl = null;
 
-  <script type="module" src="./js_scripts.js"></script>
+            // 1. Admin Login Check
+            if (username === 'admin' && password === 'admin') {
+                redirectUrl = 'admin.html';
+            } 
+            // 2. Student Login Check
+            else if (username === 'student' && password === 'student') {
+                redirectUrl = 'student.html';
+            } 
+            // 3. Invalid Credentials
+            else {
+                showMessage("Invalid username or password. Please try again.", true);
+                return; // Stop execution if login fails
+            }
+
+            // --- Successful Login and Redirection ---
+            
+            // Redirect immediately using the relative path (which appends to the current directory URL)
+            window.location.href = redirectUrl; 
+        }
+
+    </script>
 </body>
-
 </html>
