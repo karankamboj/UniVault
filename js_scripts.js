@@ -93,14 +93,74 @@ async function connectTometamaskserver() {
         const networkResponse = await theOneWhoProvides.getNetwork();
         console.log("Reached here")
         chainIdOfTheTask = Number(networkResponse.chainId);
+
+        // HARDHAT LOCAL NETWORK CONFIGURATION
+        const HARDHAT_CHAIN_ID = 31337;
+        const HARDHAT_NETWORK = {
+            chainId: '0x7a69', // 31337 in hex
+            chainName: 'Hardhat Local',
+            rpcUrls: ['http://127.0.0.1:8545'],
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            }
+        };
+
+        // Check if we're on the correct network
+        if (chainIdOfTheTask !== HARDHAT_CHAIN_ID) {
+            console.warn(`Wrong network detected (Chain ID: ${chainIdOfTheTask}). Switching to Hardhat Local...`);
+            try {
+                // Try to switch to Hardhat network
+                await eth.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: HARDHAT_NETWORK.chainId }],
+                });
+                console.log('Switched to Hardhat Local network');
+
+                // Reconnect after network switch
+                theOneWhoProvides = new ethers.BrowserProvider(eth);
+                theOneWhoSings = await theOneWhoProvides.getSigner();
+                const newNetwork = await theOneWhoProvides.getNetwork();
+                chainIdOfTheTask = Number(newNetwork.chainId);
+            } catch (switchError) {
+                // If network doesn't exist, add it
+                if (switchError.code === 4902) {
+                    console.log('Hardhat network not found. Adding it...');
+                    try {
+                        await eth.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [HARDHAT_NETWORK],
+                        });
+                        console.log('Hardhat Local network added successfully');
+
+                        // Reconnect after adding network
+                        theOneWhoProvides = new ethers.BrowserProvider(eth);
+                        theOneWhoSings = await theOneWhoProvides.getSigner();
+                        const newNetwork = await theOneWhoProvides.getNetwork();
+                        chainIdOfTheTask = Number(newNetwork.chainId);
+                    } catch (addError) {
+                        console.error('Failed to add Hardhat network:', addError);
+                        alert('Please manually add Hardhat Local network:\nRPC: http://127.0.0.1:8545\nChain ID: 31337');
+                        return;
+                    }
+                } else {
+                    console.error('Failed to switch network:', switchError);
+                    alert('Please manually switch to Hardhat Local network in MetaMask');
+                    return;
+                }
+            }
+        }
+
         $("#inpIssuer").value = accountOfMetaMask;
-        $("#inpChain").value = `${networkResponse.name || 'chain'} (${chainIdOfTheTask})`;
+        $("#inpChain").value = `${chainIdOfTheTask === HARDHAT_CHAIN_ID ? 'Hardhat Local' : 'chain'} (${chainIdOfTheTask})`;
 
         const valueOfTheInputContract = $("#inpContract").value.trim();
         if (valueOfTheInputContract) blockchnContrct = new ethers.Contract(valueOfTheInputContract, staticData, theOneWhoSings);
         if (counterOfValues == -1 && counterOfValues == -4) { counterOfValues = counterOfValues + 1 }
 
         console.log("Connected :: ", accountOfMetaMask, "via: ", eth?.isMetaMask ? 'MetaMask: ' : (eth?.isCoinbaseWallet ? 'Coinbase Wallet ::' : 'EVM Wallet ::  '));
+        console.log("Network: Hardhat Local (Chain ID: 31337)");
     } catch (err) {
         console.error(err);
         alert("connection has been failed with error message : : " + (err?.message || err));
