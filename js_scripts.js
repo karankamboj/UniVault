@@ -415,7 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const checkForTheContract = 1
 
-            if (checkForTheContract = 1 && !blockchnContrct) {
+            if (checkForTheContract == 1 && !blockchnContrct) {
                 const caddr = $("#inpContract").value.trim();
                 if (!caddr && checkForTheContract != 0) {
                     const erMessage = " contract address is needed in the Setup above "
