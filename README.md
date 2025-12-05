@@ -155,8 +155,8 @@ You need test ETH to deploy contracts and pay for transactions. https://faucet.m
 ### Part 3: Frontend UI Setup
 
 1. **Download Files**
-   - Save `index.html`, `js_scripts.js`, `styles.css` in the same folder
-   - Example: ``~/UniVault/`
+   - Save `index.html`, `admin.html`, `student.html`, `js_scripts.js`, `styles.css` in the same folder
+   - Example: `~/UniVault/`
 
 2. **Open Terminal/Command Prompt**
 
@@ -193,48 +193,30 @@ You need test ETH to deploy contracts and pay for transactions. https://faucet.m
 
 ## How to Use the UI
 
-### Initial Setup
-
+### 1. Login
 1. **Open UniVault UI** in your browser (http://localhost:8000)
+2. **Login**:
+   - **Admin**: Username `admin`, Password `admin` -> Redirects to Admin Dashboard
+   - **Student**: Username `student`, Password `student` -> Redirects to Student Dashboard
 
-2. **Connect Wallet**
+### 2. Admin Dashboard (`admin.html`)
+*Used for issuing and revoking credentials.*
+
+#### Initial Setup
+1. **Connect Wallet**
    - Click "Connect Wallet" button in top-right
    - MetaMask popup appears
    - Select your account and click "Connect"
    - Confirm you're on Sepolia network
    - The "Issuer" field auto-fills with your wallet address
 
-3. **Configure Contract**
+2. **Configure Contract**
    - In "Contract Address" field, paste your deployed contract address
    - In "Pinata JWT" field, paste your API token
    - In "Chain" field, you'll see "sepolia (11155111)" after connecting
 
-### Adding an Issuer (Admin Only)
-
-**Note**: The deployer address is automatically the admin.
-
-1. **Open Remix** 
-2. **Call `addIssuer` function**:
-   - Input: University/institution wallet address
-   - Example: `0x5B38Da6a701c568545dCfcB03FcB875f56beddC4`
-3. **Confirm Transaction** in MetaMask
-4. Wait for confirmation (~15 seconds)
-5. Check event logs for `IssuerAdded`
-
-### Anchoring a DID (Student/Subject)
-
-1. **Switch to student account** in MetaMask
-2. **Open Remix** → Connect to deployed contract
-3. **Call `anchorMyDID`**:
-   - `didURI`: `"did:example:student123"` or any DID format
-   - `docHash`: `0xe4d6d3299804d5555bc2a46af78cd89187af7c737b2717d0cd5d443858e6dbd9` (example hash)
-4. **Confirm transaction**
-5. Event `DIDAnchored` is emitted
-
-### Issuing a Credential
-
+#### Issuing a Credential
 1. **Ensure connected wallet is an issuer** (has ISSUER_ROLE)
-
 2. **Fill in Issue Form**:
    - **Subject Address**: Student's wallet address
      - Example: `0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2`
@@ -265,15 +247,29 @@ You need test ETH to deploy contracts and pay for transactions. https://faucet.m
      - IPFS URI
      - Hash used on-chain
 
-5. **Save the Credential ID** 
+5. **Save the Credential ID**
 
-### Reading a Credential
+#### Revoking a Credential
+1. **Ensure connected wallet is the issuer** of this credential
+2. **Enter Credential ID** to revoke in the "Verify or Read or Revoke" panel
+3. **Click "Revoke" button** (red, danger button)
+4. **Confirm transaction** in MetaMask
+5. **Wait for confirmation**
+   - You'll see transaction hash
+   - Status changes to "revoked: true"
 
+### 3. Student Dashboard (`student.html`)
+*Used for viewing and verifying credentials.*
+
+#### Initial Setup
+1. **Connect Wallet** (same as Admin)
+2. **Configure Contract**
+   - Enter Contract Address and Pinata JWT (if needed for reading IPFS directly, though usually public)
+
+#### Reading a Credential
 1. **Enter Credential ID** in "Credential ID" field
    - Example: `1`
-
 2. **Click "Read" button**
-
 3. **View Details** in "Current Credential" section:
    ```
    docHash: 0xe4d6d3299804d5...
@@ -286,37 +282,31 @@ You need test ETH to deploy contracts and pay for transactions. https://faucet.m
    revoked: false
    ```
 
-### Verifying a Credential
-
+#### Verifying a Credential
 1. **Enter Credential ID** (e.g., `1`)
-
 2. **Choose the same file** that was originally issued
    - Click "File to Verify" and select file
-
-3. **Click "Compute & Call verifyCredential"**
-
+3. **Click "Call verifyCredential"**
 4. **View Result**:
    - **VALID (OK)** - File matches, not revoked, not expired
    - **INVALID (NOT_FOUND)** - Credential ID doesn't exist
 
-### Revoking a Credential (Issuer Only)
+### Adding an Issuer (Admin Only - via Remix)
+*This action is currently done via Remix, not the UI.*
+1. **Open Remix** 
+2. **Call `addIssuer` function**:
+   - Input: University/institution wallet address
+   - Example: `0x5B38Da6a701c568545dCfcB03FcB875f56beddC4`
+3. **Confirm Transaction** in MetaMask
 
-1. **Ensure connected wallet is the issuer** of this credential
-
-2. **Enter Credential ID** to revoke
-
-3. **Click "Revoke" button** (red, danger button)
-
-4. **Confirm transaction** in MetaMask
-
-5. **Wait for confirmation**
-   - You'll see transaction hash
-   - Status changes to "revoked: true"
-
-6. **Verify revocation**:
-   - Click "Read" button again
-   - Should show `revoked: true`
-   - Try verifying - should show "INVALID (REVOKED)"
+### Anchoring a DID (Student - via Remix)
+*This action is currently done via Remix, not the UI.*
+1. **Switch to student account** in MetaMask
+2. **Open Remix** → Connect to deployed contract
+3. **Call `anchorMyDID`**:
+   - `didURI`: `"did:example:student123"` or any DID format
+   - `docHash`: `0xe4d6d3299804d5555bc2a46af78cd89187af7c737b2717d0cd5d443858e6dbd9` (example hash)
+4. **Confirm transaction**
 
 ---
 
