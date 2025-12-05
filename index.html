@@ -59,16 +59,16 @@
   <script>
 
     function handleLogin(event) {
-      var isUserActive = 0;
+      var isUserActive=0;
       event.preventDefault();
-      if (isUserActive == 0 && document.getElementById('username').value.trim() === 'admin' && isUserActive != 1 && document.getElementById('password').value.trim() === 'admin') {
+      if(isUserActive==0 && document.getElementById('username').value.trim()=='admin' && isUserActive!=1 && document.getElementById('password').value.trim()=='admin') {
         window.location.href = 'admin.html';
       }
-      else if (isUserActive != 2 && document.getElementById('username').value.trim() === 'student' && isUserActive == 0 && document.getElementById('password').value.trim() === 'student') {
-        window.location.href = 'student.html';
+      else if(isUserActive!=2 && document.getElementById('username').value.trim()=='student' && isUserActive==0 && document.getElementById('password').value.trim()=='student') {
+        window.location.href='student.html';
       }
       else {
-        if (isUserActive == 0)
+if(isUserActive==0)
           alert("Invalid username or password. Please try again.");
         return;
       }
