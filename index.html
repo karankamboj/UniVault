@@ -1,130 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniVault Login</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Custom styles using Inter font */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniVault Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+    }
+  </style>
 </head>
+
 <body class="flex items-center justify-center min-h-screen p-4">
 
-    <!-- Login Card Container -->
-    <div class="w-full max-w-md bg-white p-8 md:p-10 rounded-xl shadow-2xl border border-gray-100">
+  <div class="w-full max-w-md bg-white p-8 md:p-10 rounded-xl shadow-2xl border border-gray-100">
 
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <div class="flex justify-center items-center mb-2">
-                <!-- University/Vault Icon (simple SVG) -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.464 9.299 5 7.5 5S4.168 5.464 3 6.253M12 6.253C13.168 5.464 14.701 5 16.5 5S19.832 5.464 21 6.253M12 6.253v13m-6 0h12M6 13h12" />
-                </svg>
-            </div>
-            <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">UniVault</h1>
-            <p class="text-sm text-gray-500 mt-1">Securely access your academic portal</p>
-        </header>
+    <header class="text-center mb-8">
+      <div class="flex justify-center items-center mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-600" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 6.253v13m0-13C10.832 5.464 9.299 5 7.5 5S4.168 5.464 3 6.253M12 6.253C13.168 5.464 14.701 5 16.5 5S19.832 5.464 21 6.253M12 6.253v13m-6 0h12M6 13h12" />
+        </svg>
+      </div>
+      <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">UniVault</h1>
+      <p class="text-sm text-gray-500 mt-1">Securely access your academic portal</p>
+    </header>
 
-        <!-- Login Form -->
-        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
-            
-            <!-- Username Input -->
-            <div>
-                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Enter your username"
-                    required
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
-                >
-            </div>
+    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
 
-            <!-- Password Input -->
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="••••••••"
-                    required
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
-                >
-            </div>
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+      </div>
 
-            <!-- Error Message Display -->
-            <div id="messageBox" class="text-center hidden p-3 rounded-lg text-sm transition-all duration-300">
-                <!-- Error messages will appear here -->
-            </div>
+      <div id="messageBox" class="text-center hidden p-3 rounded-lg text-sm transition-all duration-300">
+      </div>
 
-            <!-- Submit Button -->
-            <div>
-                <button
-                    type="submit"
-                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out transform hover:scale-[1.01] active:scale-[0.99]"
-                >
-                    Sign In
-                </button>
-            </div>
-        </form>
+      <div>
+        <button type="submit"
+          class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out transform hover:scale-[1.01] active:scale-[0.99]">
+          Sign In
+        </button>
+      </div>
+    </form>
 
-    </div>
+  </div>
 
-    <script>
-        // Use a function to safely display messages instead of alert()
-        function showMessage(text, isError = true) {
-            const messageBox = document.getElementById('messageBox');
-            messageBox.textContent = text;
-            messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700', 'border', 'border-red-300', 'border-green-300');
-            
-            if (isError) {
-                messageBox.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-300');
-            } else {
-                messageBox.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-300');
-            }
-        }
+  <script>
+    function showMessage(text, isError = true) {
+      const messageBox = document.getElementById('messageBox');
+      messageBox.textContent = text;
+      messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700', 'border', 'border-red-300', 'border-green-300');
 
-        // Main login handling logic
-        function handleLogin(event) {
-            event.preventDefault(); // Stop the default form submission
+      if (isError) {
+        messageBox.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-300');
+      } else {
+        messageBox.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-300');
+      }
+    }
 
-            const usernameInput = document.getElementById('username');
-            const passwordInput = document.getElementById('password');
-            
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
+    function handleLogin(event) {
+      event.preventDefault();
 
-            let redirectUrl = null;
+      const usernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
 
-            // 1. Admin Login Check
-            if (username === 'admin' && password === 'admin') {
-                redirectUrl = 'admin.html';
-            } 
-            // 2. Student Login Check
-            else if (username === 'student' && password === 'student') {
-                redirectUrl = 'student.html';
-            } 
-            // 3. Invalid Credentials
-            else {
-                showMessage("Invalid username or password. Please try again.", true);
-                return; // Stop execution if login fails
-            }
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
 
-            // --- Successful Login and Redirection ---
-            
-            // Redirect immediately using the relative path (which appends to the current directory URL)
-            window.location.href = redirectUrl; 
-        }
+      let redirectUrl = null;
 
-    </script>
+      if (username === 'admin' && password === 'admin') {
+        redirectUrl = 'admin.html';
+      }
+      else if (username === 'student' && password === 'student') {
+        redirectUrl = 'student.html';
+      }
+      else {
+        showMessage("Invalid username or password. Please try again.", true);
+        return;
+      }
+
+      window.location.href = redirectUrl;
+    }
+
+  </script>
 </body>
+
 </html>
